@@ -1,4 +1,3 @@
-[README.md](https://github.com/user-attachments/files/25714503/README.md)
 # 🌾 CropIQ — Crop Yield Prediction & Explainability Dashboard
 
 > An interactive Streamlit dashboard that predicts crop yields using a Random Forest Regressor, with real-time SHAP-powered explainability and a human-readable Trust Panel designed for non-technical rural stakeholders.
