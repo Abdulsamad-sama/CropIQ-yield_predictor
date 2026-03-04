@@ -29,7 +29,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .summary-box { background: #d8f3dc; border-radius: 12px; padding: 20px 24px; margin: 20px 0; border-left: 5px solid #2d6a4f; font-size: 1.05rem; color: #1b4332; line-height: 1.7; }
 .pos-tag { display: inline-block; background: #d8f3dc; color: #1b4332; border-radius: 20px; padding: 4px 14px; margin: 4px; font-size: 0.88rem; font-weight: 600; }
 .neg-tag { display: inline-block; background: #ffe5d9; color: #9d0208; border-radius: 20px; padding: 4px 14px; margin: 4px; font-size: 0.88rem; font-weight: 600; }
-.upload-zone { background: #f0fdf4; border: 2px dashed #52b788; border-radius: 12px; padding: 30px; color: #666; text-align: center; margin: 12px 0; }
+.upload-zone { background: #f0fdf4; border: 2px dashed #52b788; border-radius: 12px; padding: 30px; text-align: center; margin: 12px 0; }
 footer { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
@@ -147,7 +147,7 @@ def generate_human_summary(shap_values, feature_names, predicted_yield, crop_nam
         ctx = FEATURE_CONTEXT.get(neg.iloc[0]["feature"], {})
         lines.append(f"🔴 **Main concern:** {ctx.get('low_neg','suboptimal conditions').capitalize()}.")
     if len(pos) > 1:
-        others = ", ".join(pos["feature"].iloc[1:4].str.split(" (").str[0].tolist())
+        others = ", ".join([f.split(" (")[0] for f in pos["feature"].iloc[1:4].tolist()])
         lines.append(f"✅ **Also helping:** {others}.")
     lines.append("💡 **Recommendation:** Address the limiting factor above to unlock the most yield gain per input unit.")
     return "\n\n".join(lines)
@@ -476,7 +476,7 @@ def main():
                 st.pyplot(fig_d)
                 st.dataframe(df_result, use_container_width=True, hide_index=True)
                 out_buf = BytesIO(); df_result.to_csv(out_buf, index=False)
-                st.download_button("⬇️ Download Results CSV", out_buf.getvalue(), "cropiq_results.csv", "text/csv", type="secondary")
+                st.download_button("⬇️ Download Results CSV", out_buf.getvalue(), "cropiq_results.csv", "text/csv", type="primary")
         else:
             st.info("Required columns: " + ", ".join(FEATURES))
 
