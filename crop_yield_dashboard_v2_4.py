@@ -29,7 +29,7 @@ html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
 .summary-box { background: #d8f3dc; border-radius: 12px; padding: 20px 24px; margin: 20px 0; border-left: 5px solid #2d6a4f; font-size: 1.05rem; color: #1b4332; line-height: 1.7; }
 .pos-tag { display: inline-block; background: #d8f3dc; color: #1b4332; border-radius: 20px; padding: 4px 14px; margin: 4px; font-size: 0.88rem; font-weight: 600; }
 .neg-tag { display: inline-block; background: #ffe5d9; color: #9d0208; border-radius: 20px; padding: 4px 14px; margin: 4px; font-size: 0.88rem; font-weight: 600; }
-.upload-zone { background: #f0fdf4; border: 2px dashed #52b788; border-radius: 12px; padding: 30px; text-align: center; color: #666; margin: 12px 0; }
+.upload-zone { background: #f0fdf4; border: 2px dashed #52b788; border-radius: 12px; padding: 30px; text-align: colour: #666; center; margin: 12px 0; }
 footer { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
@@ -325,6 +325,7 @@ def main():
         <p>Multi-crop forecasting · SHAP Trust Panel · Seasonal Time-Series · CSV Batch Mode · PDF Export</p>
     </div>""", unsafe_allow_html=True)
 
+    # sidebar
     st.sidebar.markdown("### 🌿 Crop & Field Settings")
     crop_name = st.sidebar.selectbox("Select Crop", list(CROP_PROFILES.keys()), index=0)
     st.sidebar.markdown(f"*{CROP_PROFILES[crop_name]['description']}*")
@@ -546,7 +547,6 @@ def main():
             st.dataframe(ts_df.set_index("Month").T.round(2), use_container_width=True)
         else:
             st.info("Enter a city name and click Fetch Weather to load real climate data.")
-
 
 
     with tab3:
