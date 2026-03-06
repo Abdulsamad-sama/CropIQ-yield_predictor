@@ -12,25 +12,103 @@ import base64
 import warnings
 warnings.filterwarnings("ignore")
 
-st.set_page_config(page_title="CropIQ v2", page_icon="🌾", layout="wide", initial_sidebar_state="expanded")
 
+# ------------------------------------
+# PAGE CONFIG
+# ------------------------------------
+st.set_page_config(
+    page_title="CropIQ v2",
+    page_icon="🌾",
+    layout="wide",
+    initial_sidebar_state="expanded")
+
+# ------------------------------------
+# CUSTOM CSS
+# ------------------------------------
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-.main { background-color: #f8f9f2; }
-.hero-box { background: linear-gradient(135deg, #2d6a4f 0%, #52b788 100%); border-radius: 16px; padding: 28px 36px; color: white; margin-bottom: 24px; }
-.hero-box h1 { font-size: 2rem; margin: 0 0 6px 0; }
-.hero-box p  { margin: 0; opacity: 0.88; font-size: 1.05rem; }
-.metric-card { background: white; border-radius: 12px; padding: 20px 24px; border-left: 5px solid #52b788; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 12px; }
-.metric-card h3 { margin: 0 0 4px 0; font-size: 0.82rem; color: #666; text-transform: uppercase; letter-spacing: 0.06em; }
-.metric-card p  { margin: 0; font-size: 1.8rem; font-weight: 700; color: #2d6a4f; }
-.trust-panel { background: white; border-radius: 16px; padding: 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-top: 20px; }
-.summary-box { background: #d8f3dc; border-radius: 12px; padding: 20px 24px; margin: 20px 0; border-left: 5px solid #2d6a4f; font-size: 1.05rem; color: #1b4332; line-height: 1.7; }
-.pos-tag { display: inline-block; background: #d8f3dc; color: #1b4332; border-radius: 20px; padding: 4px 14px; margin: 4px; font-size: 0.88rem; font-weight: 600; }
-.neg-tag { display: inline-block; background: #ffe5d9; color: #9d0208; border-radius: 20px; padding: 4px 14px; margin: 4px; font-size: 0.88rem; font-weight: 600; }
-.upload-zone { background: #f0fdf4; border: 2px dashed #52b788; border-radius: 12px; padding: 30px; text-align: center; color: #666; margin: 12px 0; }
-footer { visibility: hidden; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
+    
+    .main { background-color: #f8f9f2; }
+    
+    .hero-box { 
+        background: linear-gradient(135deg, #2d6a4f 0%, #52b788 100%); 
+        border-radius: 16px; 
+        padding: 28px 36px; 
+        color: white; 
+        margin-bottom: 24px; 
+    }   
+    .hero-box h1 { font-size: 2rem; margin: 0 0 6px 0; }
+    .hero-box p  { margin: 0; opacity: 0.88; font-size: 1.05rem; }
+    
+    .metric-card { 
+        background: white; 
+        border-radius: 12px; 
+        padding: 20px 24px; 
+        border-left: 5px solid #52b788; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06); 
+        margin-bottom: 12px; 
+    }
+    .metric-card h3 { margin: 0 0 4px 0; 
+        font-size: 0.82rem; 
+        color: #666; 
+        text-transform: uppercase; 
+        letter-spacing: 0.06em;
+    }
+    .metric-card p  { 
+        margin: 0; 
+        font-size: 1.8rem; 
+        font-weight: 700; 
+        color: #2d6a4f; 
+    }
+    .trust-panel { 
+        background: white; 
+        border-radius: 16px; 
+        padding: 28px; 
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+        margin-top: 20px; 
+    }
+    .summary-box { 
+        background: #d8f3dc; 
+        border-radius: 12px; 
+        padding: 20px 24px; 
+        margin: 20px 0;
+        border-left: 5px solid #2d6a4f; 
+        font-size: 1.05rem; 
+        color: #1b4332; 
+        line-height: 1.7; 
+    }
+    .pos-tag { 
+        display: inline-block; 
+        background: #d8f3dc; 
+        color: #1b4332; 
+        border-radius: 20px; 
+        padding: 4px 14px; 
+        margin: 4px; 
+        font-size: 0.88rem; 
+        font-weight: 600; 
+    }
+    .neg-tag { 
+        display: inline-block; 
+        background: #ffe5d9; 
+        color: #9d0208; 
+        border-radius: 20px; 
+        padding: 4px 14px; 
+        margin: 4px; 
+        font-size: 0.88rem; 
+        font-weight: 600; 
+    }
+    .upload-zone { 
+        background: #f0fdf4; 
+        border: 2px dashed #52b788; 
+        border-radius: 12px; 
+        padding: 30px; 
+        text-align: center; 
+        color: #666; 
+        margin: 12px 0; 
+    }
+    footer { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -119,7 +197,9 @@ def generate_dataset(crop_name: str, n: int = 2000, seed: int = 42):
         "Yield (t/ha)":       yield_,
     })
 
-
+# ------------------------------------
+# MODEL TRAINING
+# ------------------------------------
 @st.cache_resource
 def train_model(crop_name: str):
     df = generate_dataset(crop_name)
@@ -132,7 +212,9 @@ def train_model(crop_name: str):
     metrics = {"R2": round(r2_score(y_test, y_pred), 3), "MAE": round(mean_absolute_error(y_test, y_pred), 3)}
     return model, shap.TreeExplainer(model), X_train, metrics
 
-
+# ------------------------------------
+# HUMAN SUMMARY TRANSLATION LAYER
+# ------------------------------------
 def generate_human_summary(shap_values, feature_names, predicted_yield, crop_name):
     df = pd.DataFrame({"feature": feature_names, "shap": shap_values}).sort_values("shap", ascending=False)
     pos = df[df["shap"] >  0.05]
@@ -171,7 +253,9 @@ def generate_seasonal_yield(crop_name, monthly_temp, monthly_rain, monthly_solar
 def shorten(name):
     return name.replace(" (kg/ha)","").replace(" (mm)","").replace(" (%)","").replace(" (°C)","")
 
-
+# ------------------------------------
+# TRUST PANEL CHART
+# ------------------------------------
 def plot_trust_panel(shap_values, feature_names):
     df     = pd.DataFrame({"feature":[shorten(f) for f in feature_names],"shap":shap_values}).sort_values("shap")
     colors = ["#e63946" if v < 0 else "#2d6a4f" for v in df["shap"]]
@@ -189,7 +273,9 @@ def plot_trust_panel(shap_values, feature_names):
               loc="lower right", fontsize=8.5, framealpha=0.9, edgecolor="#ddd")
     plt.tight_layout(); return fig
 
-
+# ------------------------------------
+# TIME SERIES CHART
+# ------------------------------------
 def plot_time_series(ts_df, crop_name):
     color = CROP_PROFILES[crop_name]["color"]
     fig, (ax1, ax2) = plt.subplots(2,1,figsize=(8,5.5),sharex=True); fig.patch.set_facecolor("#fff")
@@ -207,7 +293,9 @@ def plot_time_series(ts_df, crop_name):
     plt.tight_layout(); fig.suptitle("Seasonal Weather & Yield Forecast", fontsize=11, fontweight="bold", y=1.01)
     return fig
 
-
+# ------------------------------------
+# MULTI CROP COMPARISON
+# ------------------------------------
 def plot_multi_crop_comparison(input_data):
     crop_names = list(CROP_PROFILES.keys())
     yields = [round(train_model(c)[0].predict(input_data)[0], 2) for c in crop_names]
@@ -225,7 +313,9 @@ def plot_multi_crop_comparison(input_data):
     plt.tight_layout()
     return fig, dict(zip(crop_names, yields))
 
-
+# ------------------------------------
+# GLOBAL FEATURE IMPORTANCE CHART
+# ------------------------------------
 def plot_global_importance(model, feature_names):
     imp    = model.feature_importances_
     df_imp = pd.DataFrame({"feature":[shorten(f) for f in feature_names],"importance":imp}).sort_values("importance")
@@ -237,7 +327,9 @@ def plot_global_importance(model, feature_names):
     ax.grid(axis="x", linestyle=":", alpha=0.4); plt.tight_layout()
     return fig
 
-
+# ------------------------------------
+# PDF REPORT GENERATION FEATURE
+# ------------------------------------
 def generate_pdf_report(crop_name, predicted_yield, shap_values, feature_names,
                          input_data, summary_text, metrics, ts_df=None):
     from reportlab.lib.pagesizes import A4
@@ -305,6 +397,9 @@ def generate_pdf_report(crop_name, predicted_yield, shap_values, feature_names,
 
 CSV_TEMPLATE = pd.DataFrame([{f: round(FEATURE_RANGES[f][2], 1) for f in FEATURES}] * 3)
 
+# ------------------------------------
+# BATCH PREDICTION FEATURE
+# ------------------------------------
 def run_batch_predictions(df_upload, crop_name):
     missing = [f for f in FEATURES if f not in df_upload.columns]
     if missing:
@@ -317,20 +412,24 @@ def run_batch_predictions(df_upload, crop_name):
                                     labels=["⚠️ Low","🌱 Moderate","🌾 Good","⭐ Excellent"])
     return df_out, None
 
-
+# ------------------------------------
+# MAIN APP
+# ------------------------------------
 def main():
+    # ---HERO -------------------------=
     st.markdown("""
     <div class="hero-box">
         <h1>🌾 CropIQ v2 — Yield Prediction & Explainability</h1>
         <p>Multi-crop forecasting · SHAP Trust Panel · Seasonal Time-Series · CSV Batch Mode · PDF Export</p>
     </div>""", unsafe_allow_html=True)
 
+    # --- SIDEBAR: Field Inputs -----------------
     st.sidebar.markdown("### 🌿 Crop & Field Settings")
     crop_name = st.sidebar.selectbox("Select Crop", list(CROP_PROFILES.keys()), index=0)
     st.sidebar.markdown(f"*{CROP_PROFILES[crop_name]['description']}*")
     st.sidebar.divider()
 
-    # upload csv sidebar
+    # ---upload csv sidebar-----------------
     st.sidebar.markdown("#### 📂 Upload your field condition CSV")
 
     sidebar_csv = st.sidebar.file_uploader(
@@ -362,8 +461,8 @@ def main():
     CSV_TEMPLATE.iloc[:1].to_csv(tmpl_buf, index=False)
     st.sidebar.divider()
 
-    # manual input of features
-    st.sidebar.markdown("**Field Conditions**")
+    # ---Manual input of features---------------
+    st.sidebar.markdown("**Manual input of field conditions**")
     nitrogen    = st.sidebar.slider("Nitrogen (kg/ha)",             0,   140, 80)
     phosphorus  = st.sidebar.slider("Phosphorus (kg/ha)",           0,   100, 50)
     potassium   = st.sidebar.slider("Potassium (kg/ha)",            0,   120, 60)
@@ -391,8 +490,10 @@ def main():
         st.markdown(f'<div class="metric-card"><h3>Top SHAP Driver</h3><p style="font-size:1.2rem">{top}</p></div>', unsafe_allow_html=True)
 
     st.divider()
-    tab1,tab2,tab3,tab4 = st.tabs(["🔍 Trust Panel","📅 Time-Series Forecast","🌽 Multi-Crop Compare","📂 CSV Batch Upload"])
+    # ---Carousel-----------------
+    tab1,tab2,tab3,tab4 = st.tabs(["🔍 Trust Panel","📂 CSV Batch Upload","📅 Time-Series Forecast","🌽 Multi-Crop Compare"])
 
+    # ---Trust Panel------------
     with tab1:
         st.markdown('<div class="trust-panel">', unsafe_allow_html=True)
         st.markdown("## 🔍 Trust Panel")
@@ -440,28 +541,38 @@ def main():
 """)
             with cb: st.pyplot(plot_global_importance(model, FEATURES))
 
-    # with tab2:
-    #     st.markdown("## 📅 Seasonal Time-Series Forecast")
-    #     with st.expander("⚙️ Monthly Weather Inputs", expanded=True):
-    #         c1, c2 = st.columns(2)
-    #         with c1:
-    #             st.markdown("**Monthly Temperature (°C)**")
-    #             monthly_temp = [st.slider(f"{m} Temp",5,45,temperature+int(3*np.sin((i-3)*np.pi/6)),key=f"t{i}") for i,m in enumerate(MONTHS)]
-    #         with c2:
-    #             st.markdown("**Monthly Rainfall (mm)**")
-    #             monthly_rain = [st.slider(f"{m} Rain",0,300,max(0,int(rainfall/12+20*np.sin((i-3)*np.pi/6))),key=f"r{i}") for i,m in enumerate(MONTHS)]
-    #     monthly_solar = [round(solar_rad+4*np.sin((i-2)*np.pi/6),1) for i in range(12)]
-    #     ts_df = generate_seasonal_yield(crop_name, monthly_temp, monthly_rain, monthly_solar,
-    #                                     nitrogen, phosphorus, potassium, soil_ph, humidity, irrigation, organic_mat)
-    #     st.session_state["ts_df"] = ts_df
-    #     st.pyplot(plot_time_series(ts_df, crop_name))
-    #     ca,cb,cc = st.columns(3)
-    #     ca.metric("Peak Month", ts_df.loc[ts_df["Est. Monthly Yield"].idxmax(),"Month"])
-    #     cb.metric("Peak Yield",  f"{ts_df['Est. Monthly Yield'].max():.2f} t/ha")
-    #     cc.metric("Season Avg",  f"{ts_df['Est. Monthly Yield'].mean():.2f} t/ha")
-    #     st.dataframe(ts_df.set_index("Month").T.round(2), use_container_width=True)
-
+# ---CSV Batch Field Upload--------------------
     with tab2:
+        st.markdown("## 📂 CSV Batch Field Upload")
+        tmpl_buf = BytesIO(); CSV_TEMPLATE.to_csv(tmpl_buf, index=False)
+        st.download_button("⬇️ Download CSV Template", tmpl_buf.getvalue(), "cropiq_template.csv", "text/csv")
+        st.markdown('<div class="upload-zone">📁 Drag & drop your CSV, or click to browse</div>', unsafe_allow_html=True)
+        uploaded = st.file_uploader("Upload field CSV", type=["csv"], label_visibility="collapsed")
+        if uploaded:
+            df_raw = pd.read_csv(uploaded)
+            st.markdown(f"**{len(df_raw)} fields loaded.** Preview:"); st.dataframe(df_raw.head(5), use_container_width=True)
+            df_result, err = run_batch_predictions(df_raw, crop_name)
+            if err:
+                st.error(f"❌ {err}")
+            else:
+                st.success(f"✅ Predictions complete for {len(df_result)} fields.")
+                r1,r2,r3 = st.columns(3)
+                r1.metric("Avg Yield",  f"{df_result['Predicted Yield (t/ha)'].mean():.2f} t/ha")
+                r2.metric("Best Field", f"{df_result['Predicted Yield (t/ha)'].max():.2f} t/ha")
+                r3.metric("Worst Field",f"{df_result['Predicted Yield (t/ha)'].min():.2f} t/ha")
+                fig_d, ax = plt.subplots(figsize=(7,3)); fig_d.patch.set_facecolor("#fff"); ax.set_facecolor("#f8f9f2")
+                ax.hist(df_result["Predicted Yield (t/ha)"],bins=20,color="#52b788",edgecolor="white",linewidth=0.8)
+                ax.set_xlabel("Predicted Yield (t/ha)",fontsize=10); ax.set_ylabel("Fields",fontsize=10)
+                ax.set_title("Yield Distribution",fontweight="bold"); ax.spines[["top","right"]].set_visible(False); plt.tight_layout()
+                st.pyplot(fig_d)
+                st.dataframe(df_result, use_container_width=True, hide_index=True)
+                out_buf = BytesIO(); df_result.to_csv(out_buf, index=False)
+                st.download_button("⬇️ Download Results CSV", out_buf.getvalue(), "cropiq_results.csv", "text/csv", type="primary")
+        else:
+            st.info("Required columns: " + ", ".join(FEATURES))
+
+# ---Seasonal Time-Series Forecast----------------
+    with tab3:
         st.markdown("## Seasonal Time-Series Forecast")
         st.markdown("Enter a location to fetch real climate data from **Open-Meteo**.")
 
@@ -547,9 +658,8 @@ def main():
         else:
             st.info("Enter a city name and click Fetch Weather to load real climate data.")
 
-
-
-    with tab3:
+# ---Multi-Crop Yield Comparison------------------
+    with tab4:
         st.markdown("## 🌽 Multi-Crop Yield Comparison")
         with st.spinner("Running all 4 crop models..."):
             fig_cmp, yield_map = plot_multi_crop_comparison(input_data)
@@ -573,34 +683,6 @@ def main():
                     "SHAP":[f"{'+' if s>0 else ''}{s:.2f}" for s in sv],
                 }).sort_values("SHAP",ascending=False), hide_index=True, use_container_width=True, height=280)
 
-    with tab4:
-        st.markdown("## 📂 CSV Batch Field Upload")
-        tmpl_buf = BytesIO(); CSV_TEMPLATE.to_csv(tmpl_buf, index=False)
-        st.download_button("⬇️ Download CSV Template", tmpl_buf.getvalue(), "cropiq_template.csv", "text/csv")
-        st.markdown('<div class="upload-zone">📁 Drag & drop your CSV, or click to browse</div>', unsafe_allow_html=True)
-        uploaded = st.file_uploader("Upload field CSV", type=["csv"], label_visibility="collapsed")
-        if uploaded:
-            df_raw = pd.read_csv(uploaded)
-            st.markdown(f"**{len(df_raw)} fields loaded.** Preview:"); st.dataframe(df_raw.head(5), use_container_width=True)
-            df_result, err = run_batch_predictions(df_raw, crop_name)
-            if err:
-                st.error(f"❌ {err}")
-            else:
-                st.success(f"✅ Predictions complete for {len(df_result)} fields.")
-                r1,r2,r3 = st.columns(3)
-                r1.metric("Avg Yield",  f"{df_result['Predicted Yield (t/ha)'].mean():.2f} t/ha")
-                r2.metric("Best Field", f"{df_result['Predicted Yield (t/ha)'].max():.2f} t/ha")
-                r3.metric("Worst Field",f"{df_result['Predicted Yield (t/ha)'].min():.2f} t/ha")
-                fig_d, ax = plt.subplots(figsize=(7,3)); fig_d.patch.set_facecolor("#fff"); ax.set_facecolor("#f8f9f2")
-                ax.hist(df_result["Predicted Yield (t/ha)"],bins=20,color="#52b788",edgecolor="white",linewidth=0.8)
-                ax.set_xlabel("Predicted Yield (t/ha)",fontsize=10); ax.set_ylabel("Fields",fontsize=10)
-                ax.set_title("Yield Distribution",fontweight="bold"); ax.spines[["top","right"]].set_visible(False); plt.tight_layout()
-                st.pyplot(fig_d)
-                st.dataframe(df_result, use_container_width=True, hide_index=True)
-                out_buf = BytesIO(); df_result.to_csv(out_buf, index=False)
-                st.download_button("⬇️ Download Results CSV", out_buf.getvalue(), "cropiq_results.csv", "text/csv", type="primary")
-        else:
-            st.info("Required columns: " + ", ".join(FEATURES))
 
     st.caption("CropIQ v2 · RandomForest + SHAP · Synthetic data — demonstration only.")
 

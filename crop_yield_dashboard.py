@@ -10,9 +10,9 @@ from sklearn.metrics import r2_score, mean_absolute_error
 import warnings
 warnings.filterwarnings("ignore")
 
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 # PAGE CONFIG
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 st.set_page_config(
     page_title="CropIQ — Yield Predictor",
     page_icon="🌾",
@@ -20,9 +20,9 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 # CUSTOM CSS
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
@@ -106,9 +106,9 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 # DATA GENERATION
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 @st.cache_data
 def generate_dataset(n=2000, seed=42):
     rng = np.random.default_rng(seed)
@@ -160,9 +160,9 @@ def generate_dataset(n=2000, seed=42):
     return df
 
 
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 # MODEL TRAINING
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 @st.cache_resource
 def train_model(df):
     X = df.drop(columns=["Yield (t/ha)"])
@@ -189,9 +189,9 @@ def train_model(df):
     return model, explainer, X_train, metrics
 
 
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 # HUMAN SUMMARY TRANSLATION LAYER
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 FEATURE_CONTEXT = {
     "Nitrogen (kg/ha)": {
         "nutrient": True,
@@ -290,9 +290,9 @@ def generate_human_summary(shap_values, feature_names, feature_values, predicted
     return "\n\n".join(lines)
 
 
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 # TRUST PANEL CHART
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 def plot_trust_panel(shap_values, feature_names):
     shap_df = pd.DataFrame({"feature": feature_names, "shap": shap_values})
     shap_df = shap_df.sort_values("shap")
@@ -330,9 +330,9 @@ def plot_trust_panel(shap_values, feature_names):
     return fig
 
 
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 # GLOBAL FEATURE IMPORTANCE CHART
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 def plot_global_importance(model, feature_names):
     imp = model.feature_importances_
     df_imp = pd.DataFrame({"feature": feature_names, "importance": imp}).sort_values("importance")
@@ -356,15 +356,15 @@ def plot_global_importance(model, feature_names):
     return fig
 
 
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 # MAIN APP
-# ─────────────────────────────────────────────
+# ------------------------------------------------
 def main():
     df = generate_dataset()
     model, explainer, X_train, metrics = train_model(df)
     features = [c for c in df.columns if c != "Yield (t/ha)"]
 
-    # ── HERO ──────────────────────────────────
+    # --- HERO ------------------------------─
     st.markdown("""
     <div class="hero-box">
         <h1>🌾 CropIQ — Yield Prediction & Explainability Dashboard</h1>
@@ -372,7 +372,7 @@ def main():
     </div>
     """, unsafe_allow_html=True)
 
-    # ── SIDEBAR: Field Inputs ──────────────────
+    # --- SIDEBAR: Field Inputs ---------------------------
     st.sidebar.markdown('<div class="sidebar-header">🌱 Your Field Conditions</div>', unsafe_allow_html=True)
 
     nitrogen     = st.sidebar.slider("Nitrogen (kg/ha)",      0,   140,  80)
@@ -391,13 +391,13 @@ def main():
         soil_ph, humidity, solar_rad, irrigation, organic_mat
     ]], columns=features)
 
-    # ── PREDICTION ────────────────────────────
+    # --- PREDICTION ---------------------─
     predicted_yield = model.predict(input_data)[0]
 
-    # ── SHAP values for this prediction ───────
+    # --- SHAP values for this prediction ---------─
     shap_values = explainer.shap_values(input_data)[0]
 
-    # ── TOP ROW METRICS ───────────────────────
+    # --- TOP ROW METRICS ---------------------------------─
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.markdown(f"""<div class="metric-card">
@@ -416,7 +416,7 @@ def main():
 
     st.divider()
 
-    # ── TRUST PANEL ───────────────────────────
+    # --- TRUST PANEL ------------------
     st.markdown('<div class="trust-panel">', unsafe_allow_html=True)
     st.markdown("## 🔍 Trust Panel — What's Driving This Yield?")
 
@@ -460,7 +460,7 @@ def main():
 
     st.divider()
 
-    # ── GLOBAL IMPORTANCE ─────────────────────
+    # --- GLOBAL IMPORTANCE ------------------------------─
     with st.expander("🌐 Global Feature Importance (across all 2,000 simulated fields)", expanded=False):
         col_a, col_b = st.columns([1, 1.5])
         with col_a:
@@ -482,7 +482,7 @@ SHAP (SHapley Additive exPlanations) provides theoretically grounded per-predict
             fig_global = plot_global_importance(model, features)
             st.pyplot(fig_global)
 
-    # ── DATA EXPLORER ─────────────────────────
+    # --- DATA EXPLORER ------------------
     with st.expander("📂 Explore the Synthetic Dataset (sample)", expanded=False):
         st.dataframe(df.sample(50, random_state=7).round(2), use_container_width=True)
 
