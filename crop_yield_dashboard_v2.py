@@ -420,6 +420,7 @@ def main():
     st.markdown("""
     <div class="hero-box">
         <h1>🌾 CropIQ v2 — Yield Prediction & Explainability</h1>
+        <p> Enter your field conditions, get an AI-powered yield forecast, and understand <em>exactly</em> why — in plain language.</p>
         <p>Multi-crop forecasting · SHAP Trust Panel · Seasonal Time-Series · CSV Batch Mode · PDF Export</p>
     </div>""", unsafe_allow_html=True)
 
